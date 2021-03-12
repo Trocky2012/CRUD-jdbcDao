@@ -1,0 +1,95 @@
+package model.dao.jdbc;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import db.DB;
+import db.DbException;
+import model.dao.Department;
+import model.dao.Seller;
+import model.dao.SellerDao;
+
+public class SellerDaoJDBC implements SellerDao{
+	
+	private Connection conn;
+	
+	public SellerDaoJDBC(Connection conn) {
+		this.conn = conn;
+	}
+
+	@Override
+	public void insert(Seller obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(Seller obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteById(Seller obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Seller findById(Integer id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "WHERE seller.Id = ?");
+			st.setInt(1, id);
+			rs = st.executeQuery();
+			if(rs.next()) {
+				Department dep = getDepartment(rs);
+				Seller seller = getSeller(rs, dep);
+				return seller;
+			}
+			return null;
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+
+	private Seller getSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller seller = new Seller();
+		seller.setId(rs.getInt("Id"));
+		seller.setName(rs.getString("Name"));
+		seller.setEmail(rs.getString("Email"));
+		seller.setBaseSalary(rs.getDouble("BaseSalary"));
+		seller.setBirthDate(rs.getDate("BirthDate"));
+		seller.setDepartment(dep);
+		return seller;
+	}
+
+	private Department getDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
+	}
+
+	@Override
+	public List<Seller> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+}
