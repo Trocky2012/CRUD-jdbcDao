@@ -27,7 +27,6 @@ public class Program {
 		System.out.println("New seller has been inserted:\n" + newSeller);	
 		
 		System.out.println("\n>> Update :\n");
-		
 		Seller updateSeller = sellerDao.findById(newSeller.getId());
 		updateSeller.setName("Guilherme Ribas");
 		updateSeller.setBaseSalary(4500.0);
